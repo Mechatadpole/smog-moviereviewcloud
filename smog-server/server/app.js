@@ -1,23 +1,32 @@
 require('dotenv').config();
-var express = require('express'); //! brings in the requirement of the express npm package
+
+//! Base essentials for a working server:
+var express = require('express'); //? brings in the requirement of the express npm package
 var app = express(); //! Creates an instance of express.
-var test = require('./controllers/testcontroller') //* Can be removed
+
+//! Database to postgresql connection :
 var sequelize = require('./db');
+
+//! Body parser for JSON responses in Postman :
 const bodyParser = require('body-parser');
+
+//! Syncs sql database to ran server:
+sequelize.sync(); //TODO: When resetting all tables, put {force: true} into the parameters of sync().
 app.use(bodyParser.json());
 
-sequelize.sync(); //TODO: When resetting all tables, put {force: true} into the parameters of sync().
-
+//! Controllers :
+var test = require('./controllers/testcontroller');
 const user = require('./controllers/usercontroller');
 const review = require('./controllers/reviewcontroller');
 const favorite = require('./controllers/favoritecontroller');
 
+//! Routes :
 app.use('/user', user);
 app.use('/review', review);
 app.use('/favorite', favorite);
 
 //? Message displayed to console when backend server is up and running connected to the correct port
-app.listen(3000, function () {
+app.listen(process.env.PORT, function () {
     //! if app is being hosted on this port, print the line to the console
     console.log('The backend is now listening on port 3000');
 });
@@ -29,4 +38,3 @@ app.use('/api/test', function (req, res) { //* Can be removed
     //? Response Call Back Function sends this string of text into the response of the postman JSON
     res.send('This is a test from the /api/test endpoint. Backend connected');
 });
-
